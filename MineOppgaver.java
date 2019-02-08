@@ -11,7 +11,6 @@ class MineOppgaver {
     public static void main(String[] args) {
 
         UserInteraction userInteraction = new UserInteraction();
-        userInteraction.setUp();
         userInteraction.startMenu();
     
     }
@@ -24,18 +23,15 @@ class MineOppgaver {
 class UserInteraction {
    
     TaskController controller = null; //peker på TaskController objektet som lages i setUp()
-    TaskList list = null; // peker på TaskLIst objektet som lages i setUp()
     int choice = 0;
     boolean run = true;
     Scanner myCmnd = null;
 
 
-    /** metoden setUp() lager et objekt av klassen TaskController og 
-     * et objekt av klassen TaskList 
+    /** konstruktøren lager et objekt av klassen TaskController 
      * */
-    public void setUp(){
+    public UserInteraction() {
         controller = new TaskController();
-        list = new TaskList();
     }
 
 
@@ -72,7 +68,7 @@ class UserInteraction {
                                 System.out.println("Oppgaven eksisterer ikke og ble derfor ikke fjernet.");
                             }break;
                         case 3: 
-                            controller.printTaskList(list);
+                            controller.printTaskList();
                             break;
                         case 4:
                             System.out.println("\nAvslutter programmet.\n");
@@ -108,7 +104,7 @@ class UserInteraction {
             if (priority < 1 || priority > 3) { // Dersom integer - undersøker om gyldig prioritet 1-3
                 System.out.println("\nUgyldig prioritet.\n");
             } else { // Oppgave og prioritet er korrekt oppgitt
-                controller.createTask(list, taskString, priority); // gå til controller som vil behandle oppgaven videre
+                controller.createTask(taskString, priority); // gå til controller som vil behandle oppgaven videre
             }
         } else { // Input er ikke integer
             System.out.println("\nUgyldig kommando i promtTask().\n");
@@ -132,7 +128,7 @@ class UserInteraction {
         if (taskReader.hasNextInt()) {
             
             id = taskReader.nextInt();  // Leser brukerinput dersom integer
-                answer = controller.removeTask(list, id); // gå til controller som vil behandle oppgaven videre, returner svaret
+                answer = controller.removeTask(id); // gå til controller som vil behandle oppgaven videre, returner svaret
         } else { // Input er ikke integer
             System.out.println("\nUgyldig kommando i promtRemoveTask().\n");
         }
@@ -147,14 +143,17 @@ class TaskController {
     Task presentTask = null;
     TaskList list = null;
 
+    /** Konstruktøren lager et objekt av TaskList */
+    public TaskController() {
+        list = new TaskList();
+    }
 
    /** Metoden createTask() lager et nytt objekt Task. Undersøker om listen er tom eller ei - NØDVENDIG???, 
     * og kaller deretter insertTask() som setter Task inn i TaskList på rett sted
     */
-    public void createTask(TaskList taskList, String task, int priority) {
-        /** TODO vudere: skal denne returnere en boolean for å indikere suksess?*/
+    public void createTask(String task, int priority) {
+        /** @TODO vudere: skal denne returnere en boolean for å indikere suksess?*/
 
-        list = taskList; // kopierer pekeren til TaskList objektet til lokal variabel
 
         presentTask = new Task(); // oppretter et objekt av klassen Task
         presentTask.taskID = presentTaskID++; // legger til en unik TaskID som økes for hver gang createTask() kalles
@@ -208,9 +207,9 @@ class TaskController {
 
 
     /** Metoden removeTask() leter gjennom TaskList til Task med samme ID er funnet,
-     * og fjerner dette Taskobjektet fra listen. Kan vurdere en mer effektiv søkemetode ved behov.   1    1-1-3-3
+     * og fjerner dette Taskobjektet fra listen. Kan vurdere en mer effektiv søkemetode ved behov.
      */
-    public boolean removeTask(TaskList list, int ID) {
+    public boolean removeTask(int ID) {
     
         presentTask = list.header;
         Task prevTask = null;
@@ -250,7 +249,7 @@ class TaskController {
     /** Metoden printTaskList() løper gjennom listen og printer ut alle oppgaver,
      *  tilhørende prioritet og ID     
      * */
-    public void printTaskList(TaskList list) {
+    public void printTaskList() {
 
         if (list.header == null) {
             System.out.println("Ingen oppgaver lagt til!");
@@ -272,9 +271,6 @@ class TaskList {
     Task trailer = null; // skal peke på siste Task (node) i listen
     int numberOfTasks = 0; // antall objekter av klassen Task i listen, oppdateres i insertTask() og removeTask()
 
-    public void setUp() {
-
-    }
 }
 
 
